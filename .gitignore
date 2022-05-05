@@ -1,0 +1,8 @@
+str/*.txt
+template/*.t
+content/*.lc
+font/
+css/
+js/
+img/
+*.php
