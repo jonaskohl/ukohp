@@ -1,0 +1,20 @@
+<?php
+  require_once "inc/lcfile.php";
+  require_once "inc/template.php";
+  
+  $lcpage = $_GET["page"] ?? "index";
+  if ($lcpage === "")
+    $lcpage = "index";
+  
+  if (!lcfile_is_valid_lcfile($lcpage)) {
+    http_response_code(404);
+    exit;
+  }
+  
+  $lcfile = lcfile_evaluate(lcfile_get($lcpage));
+  echo template_evaluate("main", [
+    "page" => $lcpage,
+    "title" => i18nget("$lcpage/header"),
+    "content" => $lcfile,
+    "uri" => $_SERVER["REQUEST_URI"]
+  ]);
