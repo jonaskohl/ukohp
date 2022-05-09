@@ -65,7 +65,7 @@ function i18nget($key, $vars = []) {
   
   $str = html_entity_decode($str);
   
-  $str = htmlentities($str);
+  $str = htmlify_string($str);
   
   $str = str_replace(array_map(function($i) {
     return "%RAW{" . $i ."}";
@@ -88,4 +88,31 @@ function langselect($pagename = "") {
       ...$langoptions,
     '</div>'
   ]);
+}
+
+function htmlify_string($str) {
+  $str = htmlentities($str);
+  if (substr($str, 0, 5) === "RICH:") {
+    $str = substr($str, 5);
+    $str = preg_replace([
+      '@//(.*?)//@',
+      '@\*\*(.*?)\*\*@',
+      '@__(.*?)__@',
+      '@~~(.*?)~~@',
+      '@&gt;&gt;(.*?)&lt;&lt;@',
+      '@!!(.*?)!!@',
+      '@\^\^(.*?)\^\^@',
+      '@;;(.*?);;@',
+    ], [
+      '<i>$1</i>',
+      '<b>$1</b>',
+      '<u>$1</u>',
+      '<s>$1</s>',
+      '<ins>$1</ins>',
+      '<mark>$1</mark>',
+      '<sup>$1</sup>',
+      '<sub>$1</sub>',
+    ], $str);
+  }
+  return $str;
 }

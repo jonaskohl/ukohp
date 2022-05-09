@@ -14,11 +14,15 @@ function lcfile_is_valid_lcfile($name) {
   return in_array($name, lcfile_get_lcfiles());
 }
 
-function lcfile_get($name) {
+function lcfile_get_path($name) {
   if (!lcfile_is_valid_lcfile($name))
     return '<strong>[ERROR]</strong> Invalid content file: ' . htmlentities($name) . '<br>';
   
-  return file_get_contents(realpath(__DIR__ . "/../content/" . $name . ".lc"));
+  return realpath(__DIR__ . "/../content/" . $name . ".lc");
+}
+
+function lcfile_get($name) {
+  return file_get_contents(lcfile_get_path($name));
 }
 
 function lcfile_evaluate($contents, $context = []) {

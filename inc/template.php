@@ -14,16 +14,19 @@ function template_is_valid_template($template) {
   return in_array($template, template_get_templates());
 }
 
-function template_evaluate($name, $context = []) {
+function template_evaluate($name, $context = [], $contentFile = null, $dontLocalizeContent = false) {
   if (!template_is_valid_template($name))
     return '<strong>[ERROR]</strong> Invalid template: ' . htmlentities($name) . '<br>';
   
   $filename = realpath(__DIR__ . "/../template/" . $name . ".t");
   
   $contents = file_get_contents($filename);
+
+  if ($dontLocalizeContent)
+    $contents = lcfile_evaluate($contents, $context);
   
   $context["locale"] = $context["locale"] ?? getcurrentlocale();
-  $context["internal:lastmod"] = footer_lastmod($filename);
+  $context["internal:lastmod"] = footer_lastmod($contentFile ?? $filename);
   $context["internal:langselect"] = langselect($context["page"] ?? "");
   
   $contents = str_replace(array_map(function($i) {
@@ -42,7 +45,8 @@ function template_evaluate($name, $context = []) {
     return "%RAW{" . $i ."}";
   }, array_keys($context)), array_values($context), $contents);
   
-  $contents = lcfile_evaluate($contents, $context);
+  if (!$dontLocalizeContent)
+    $contents = lcfile_evaluate($contents, $context);
   
   return $contents;
 }
