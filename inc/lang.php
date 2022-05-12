@@ -80,13 +80,15 @@ function langselect($pagename = "") {
     if ($l === $_currentlang)
       return '<span>' . htmlspecialchars(strtoupper($l)) . '</span>';
     else
-      return '<a href="?lang=' . htmlspecialchars($l) . '&amp;page=' . htmlentities(rawurlencode($pagename)) . '">' . htmlspecialchars(strtoupper($l)) . '</a>';
+      return '<a href="?page=' . htmlentities(rawurlencode($pagename)) . '&amp;lang=' . htmlspecialchars($l) . '">' . htmlspecialchars(strtoupper($l)) . '</a>';
   }, $_validlangs);
   return implode("\n", [
+    '<!--[lang]Start of language selector-->',
     '<div id="langselect">',
-      file_get_contents(__DIR__ . "/../img/_inc_lang.svg"),
-      ...$langoptions,
-    '</div>'
+    file_get_contents(__DIR__ . "/../img/_inc_lang.svg"),
+    ...$langoptions,
+    '</div>',
+    '<!--[lang]End of language selector-->',
   ]);
 }
 

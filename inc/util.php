@@ -3,7 +3,7 @@
 require_once __DIR__ . "/lang.php";
 
 function footer_lastmod($file) {
-  echo "<!--";var_dump($file);echo "-->";
+  // echo "<!--";var_dump($file);echo "-->";
   $datefmt = datefmt_create(
     i18nget("generic/lastmod/dtlang"),
     IntlDateFormatter::FULL,
