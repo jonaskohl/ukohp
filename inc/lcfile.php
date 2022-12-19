@@ -25,7 +25,23 @@ function lcfile_get($name) {
   return file_get_contents(lcfile_get_path($name));
 }
 
-function lcfile_evaluate($contents, $context = []) {
+function lcfile_evaluate($contents, &$context = []) {
+  $contents = preg_replace_callback('/^!!ctxset\s+"((?:[^"\\\\]|\\\\.)*)"\s+(.*)$/m', function($matches) use (&$context) {
+    $key = $matches[1];
+    $value = $matches[2];
+    if (preg_match('/^@\((.*?)\)(\{.*?\})?@$/', $value, $vmatch)) {
+      $innercontext = [];
+      if (!empty($vmatch[2])) {
+        $innercontext = json_decode($vmatch[2], true) ?? [];
+        $innercontext = array_map("lcfile_evaluate", $innercontext);
+      }
+      
+      $value = i18nget($vmatch[1], $innercontext);
+    }
+    $context[$key] = $value;
+    return "<!--[lcfile]context: '$key'='$value'-->";
+  }, $contents);
+  
   $contents = preg_replace_callback(LC_REG_I18N, function($m) {
     $innercontext = [];
     if (!empty($m[2])) {
